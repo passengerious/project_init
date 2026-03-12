@@ -194,6 +194,75 @@ write_if_missing() {
     echo "📝 Created $path"
 }
 
+write_if_missing "ADR.md" <<EOF
+# Architecture Decision Records (ADR)
+
+## ADR-001: Agentic Workspace and Persistence
+**Status:** Accepted
+**Decision:** Use the \`.agents/\` directory as the agent workspace and \`.agents/memory-bank/\` as the canonical persistence store.
+EOF
+
+write_if_missing "AGENTS.md" <<'EOF'
+# Agent Instructions
+
+## Required Startup Read
+
+On startup, the agent must read:
+
+1. `ADR.md`
+2. `.agents/PROTOCOL.md`
+3. `.agents/memory-bank/product.md`
+4. `.agents/memory-bank/systemPatterns.md`
+5. `.agents/memory-bank/activeContext.md`
+6. `.agents/memory-bank/progress.md`
+7. The latest 2 logs from `.agents/memory-bank/logs/`, if available
+
+## Required Persistence
+
+During work, the agent should treat `.agents/memory-bank/` as the canonical project memory.
+
+At minimum:
+
+- update `activeContext.md` when the current objective or plan changes
+- update the current session log for major milestones or decisions
+- update `progress.md` before completion or handoff
+
+## Skill Model
+
+- global bundles live under `.agents/skills/`
+- project-level bundles may be linked under `.agents/skills/project/`
+EOF
+
+write_if_missing ".agents/PROTOCOL.md" <<'EOF'
+# Agent Persistence Protocol
+
+## Boot Sequence
+
+The absolute first action on initialization is to restore project context by reading:
+
+1. `ADR.md`
+2. `AGENTS.md`
+3. `.agents/memory-bank/product.md`
+4. `.agents/memory-bank/systemPatterns.md`
+5. `.agents/memory-bank/activeContext.md`
+6. `.agents/memory-bank/progress.md`
+7. The latest 2 task logs from `.agents/memory-bank/logs/`
+
+## Runtime Rules
+
+- use `.agents/memory-bank/` as the canonical persistence store
+- use `.agents/skills/` for global bundles
+- use `.agents/skills/project/` for project-specific bundle overlays when present
+
+## Shutdown Sequence
+
+Before completion or handoff:
+
+1. update the active session log
+2. update `progress.md`
+3. refresh `activeContext.md` to reflect the next live concern
+EOF
+
 write_if_missing "$MEMORY_DIR/product.md" <<EOF
 # Product Goals: $PROJECT_NAME
 - **Vision**: [Define core purpose]
