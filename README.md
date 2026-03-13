@@ -76,46 +76,48 @@ Important Note:
 
 All referenced skills are sourced from the [antigravity-awesome-skills](https://github.com/sickn33/antigravity-awesome-skills).
 
-🚀 Installation & Skills Architecture
+## 🚀 Installation & Skills Architecture
+
 To ensure maximum compatibility across different CLI agents and to prevent crashes associated with default pathing in recent updates, we use a Global Warehouse approach.
 
-1. Install the Skill Warehouse
+### 1. Install the Skill Warehouse
 Install all skills to the industry-standard path. This keeps your skills isolated from tool-specific configurations:
 
-Bash
-
+```bash
 npx antigravity-awesome-skills --path ~/.agents/skills
-2. Why use ~/.agents/skills?
-While the default npx installation targets .gemini/antigravity/skills/, we strongly recommend using the ~/.agents/skills directory.
+```
 
-Stability: Prevents agent crashes caused by recent Antigravity updates regarding default path resolution.
+### 2. Why use `~/.agents/skills`?
+While the default npx installation targets `.gemini/antigravity/skills/`, we strongly recommend using the `~/.agents/skills` directory.
 
-Interoperability: Aligns with the Agent Skills Standard, making your skills instantly discoverable by tools like KiloCode, Codex, and others.
+- **Stability**: Prevents agent crashes caused by recent Antigravity updates regarding default path resolution.
+- **Interoperability**: Aligns with the Agent Skills Standard, making your skills instantly discoverable by tools like KiloCode, Codex, and others.
+- **Portability**: Allows you to maintain one "Gold Standard" library and symlink it to multiple CLI agents.
 
-Portability: Allows you to maintain one "Gold Standard" library and symlink it to multiple CLI agents.
+## 🛠️ Configuration & Environment
+If you use a custom installation path, you must ensure your environment is aware of it. The provided automation scripts rely on the `LIB_PATH` variable to establish symlinks.
 
-🛠️ Configuration & Environment
-If you use a custom installation path, you must ensure your environment is aware of it. The provided automation scripts rely on the LIB_PATH variable to establish symlinks.
+### Set your Library Path
+Add this to your `.bashrc` or `.zshrc`:
 
-Set your Library Path
-Add this to your .bashrc or .zshrc:
-
-Bash
-
+```bash
 export LIB_PATH="$HOME/.agents/skills"
-[!IMPORTANT]
-If skills are installed in a non-default location and LIB_PATH is not set, the initialization scripts will fail to map the skill bundles, resulting in an empty agent exoskeleton.
+```
 
-🏛️ Structural Example
+> [!IMPORTANT]
+> If skills are installed in a non-default location and `LIB_PATH` is not set, the initialization scripts will fail to map the skill bundles, resulting in an empty agent exoskeleton.
+
+## 🏛️ Structural Example
 A properly initialized environment should look like this:
 
-Plaintext
+```text
+~/.agents/skills/           <-- Your Physical Warehouse
+  └── brainstorming/
+  └── software-architecture/
 
-~/.agents/skills/          <-- Your Physical Warehouse
-└── brainstorming/
-└── software-architecture/
 ~/.local/share/kilo/skills/ --> Symlinked to ~/.agents/skills/
 ~/projects/my-app/.agents/  --> Project-specific links to Warehouse
+```
 
 ## Recommended Workflow
 
