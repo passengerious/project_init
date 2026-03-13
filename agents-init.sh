@@ -1,10 +1,19 @@
 #!/bin/bash
 set -e
 
-LIB_PATH="${ANTIGRAVITY_SKILLS:-$HOME/.gemini/antigravity/skills}"
+LIB_PATH="$HOME/.agent/skills"
 PROJECT_NAME=$(basename "$(pwd)")
 MEMORY_DIR=".agents/memory-bank"
 LOGS_DIR="$MEMORY_DIR/logs"
+
+# Check if the path exists AND is a directory
+if [ -d "$LIB_PATH" ]; then
+    echo "✅ Skill Warehouse found at $LIB_PATH"
+else
+    echo "❌ Error: Skill Warehouse missing at $LIB_PATH"
+    echo "Please ensure your 'Gold Standard' skills are located there."
+    exit 1
+fi
 
 echo "🚀 Launching Universal Agentic Factory for [$PROJECT_NAME]..."
 
@@ -334,7 +343,5 @@ YYYY-MM-DD
 ## Status
 IN-PROGRESS
 EOF
-
-ln -sfn ".agents/memory-bank" "./memory-bank"
 
 echo "✅ Initialization complete. Protocol-Ready."
