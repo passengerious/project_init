@@ -11,9 +11,8 @@ This repo uses two shell scripts:
 
 It does three things:
 
-1. Creates the `.agents/` workspace structure.
+1. Creates the `.agents/` workspace structure with memory store under `.agents/memory-bank/`.
 2. Creates generic/global skill symlinks under `.agents/skills/`.
-3. Creates the canonical memory store under `.agents/memory-bank/` if files do not already exist.
 
 The global skill bundles it scaffolds are:
 
@@ -33,7 +32,7 @@ Run it from the project root:
 ```bash
 cd ~/your-workspace/your-project
 chmod +x agents-init.sh
-bash agents-init.sh
+./agents-init.sh
 ```
 
 ## What `project-skills-init.sh` does
@@ -55,7 +54,7 @@ Example usage:
 ```bash
 cd ~/your-workspace/your-project
 chmod +x project-skills-init.sh
-bash project-skills-init.sh
+./project-skills-init.sh
 ```
 
 That will create project-level skill overlays for the headless WordPress / Next.js project without changing the global bundle layout created by `agents-init.sh`.
@@ -65,33 +64,36 @@ That will create project-level skill overlays for the headless WordPress / Next.
 Both scripts resolve skills from:
 
 ```bash
-LIB_PATH="${ANTIGRAVITY_SKILLS:-$HOME/.gemini/antigravity/skills}"
+LIB_PATH="${LIB_PATH:-$HOME/.agents/skills}"
 ```
 
 That means:
 
-- preferred: have the skill library already installed at `$HOME/.gemini/antigravity/skills`
-- or: set `ANTIGRAVITY_SKILLS` to the your agents skills location before running the scripts
+- preferred: have the skill library already installed at `$HOME/.agents/skills`
+- or: set `LIB_PATH` to the your agents skills location before running the scripts
 
 Important Note: 
 
 All referenced skills are sourced from the [antigravity-awesome-skills](https://github.com/sickn33/antigravity-awesome-skills).
 
-If the skills are not installed in the default location and `ANTIGRAVITY_SKILLS` is not set, the scripts will not be able to create the symlinks.
+If the skills are not installed in the default location and LIB_PATH is not set, the scripts will not be able to create the symlinks.
 
 ## Recommended Workflow
 
-1. Install the Antigravity skill library, or set `ANTIGRAVITY_SKILLS` to its location.
+1. Install the Antigravity skill library, or set `LIB_PATH` to its location.
 2. Run the universal initializer:
 
 ```bash
-bash "New folder/agents-init.sh"
+cd ~/your-workspace/your-project
+chmod +x agents-init.sh
+./agents-init.sh
 ```
 
 3. Run the project bundle linker:
 
 ```bash
-bash "New folder/project-skills-init.sh" "headlessWP_skills_bundles.md"
+chmod +x project-skills-init.sh
+./project-skills-init.sh "headlessWP_skills_bundles.md"
 ```
 
 4. Confirm the results under:
@@ -106,5 +108,20 @@ bash "New folder/project-skills-init.sh" "headlessWP_skills_bundles.md"
 
 - `agents-init.sh` is intentionally global-only.
 - `project-skills-init.sh` is intentionally project-specific.
-- The memory bank remains canonical at `.agents/memory-bank/`.
-- The `memory-bank` symlink at repo root points to `.agents/memory-bank/`.
+
+The structure is complete enough to start.
+
+  - the persistence contract is defined in AGENTS.md, ADR.md, and .agents/PROTOCOL.md
+  - the logs directory exists with a template
+
+  What is still incomplete is content, not structure. Several files are still placeholders:
+
+  - product.md
+  - systemPatterns.md
+  - activeContext.md
+  - progress.md
+
+That is normal for a new project. During the first session (new agents works on a blank project, initiated with the agents-init.sh script) prompt agent to:
+
+  - create the first session log
+  - replace placeholder text in the memory files with actual project context
