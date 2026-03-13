@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-LIB_PATH="$HOME/.agent/skills"
+LIB_PATH="$HOME/.agents/skills"
 PROJECT_NAME=$(basename "$(pwd)")
 MEMORY_DIR=".agents/memory-bank"
 LOGS_DIR="$MEMORY_DIR/logs"
