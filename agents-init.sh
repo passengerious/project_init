@@ -1,10 +1,19 @@
 #!/bin/bash
 set -e
 
-LIB_PATH="${ANTIGRAVITY_SKILLS:-$HOME/.gemini/antigravity/skills}"
+LIB_PATH="$HOME/.agents/skills"
 PROJECT_NAME=$(basename "$(pwd)")
 MEMORY_DIR=".agents/memory-bank"
 LOGS_DIR="$MEMORY_DIR/logs"
+
+# Check if the path exists AND is a directory
+if [ -d "$LIB_PATH" ]; then
+    echo "✅ Skill Warehouse found at $LIB_PATH"
+else
+    echo "❌ Error: Skill Warehouse missing at $LIB_PATH"
+    echo "Please ensure your 'Gold Standard' skills are located there."
+    exit 1
+fi
 
 echo "🚀 Launching Universal Agentic Factory for [$PROJECT_NAME]..."
 
@@ -23,16 +32,12 @@ declare -A git_collaboration_skills=(
     ["create-pr"]="create-pr"
     ["iterate-pr"]="iterate-pr"
     ["gh-review-requests"]="gh-review-requests"
-    ["comprehensive-review-pr-enhance"]="comprehensive-review-pr-enhance"
     ["differential-review"]="differential-review"
     ["code-review-checklist"]="code-review-checklist"
     ["code-review-excellence"]="code-review-excellence"
-    ["code-reviewer"]="code-reviewer"
-    ["codex-review"]="codex-review"
     ["receiving-code-review"]="receiving-code-review"
     ["requesting-code-review"]="requesting-code-review"
     ["fix-review"]="fix-review"
-    ["comprehensive-review-full-review"]="comprehensive-review-full-review"
     ["git-hooks-automation"]="git-hooks-automation"
     ["gitlab-ci-patterns"]="gitlab-ci-patterns"
     ["gitops-workflow"]="gitops-workflow"
@@ -49,7 +54,6 @@ declare -A planning_execution_skills=(
     ["ask-questions-if-underspecified"]="ask-questions-if-underspecified"
     ["audit-context-building"]="audit-context-building"
     ["writing-plans"]="writing-plans"
-    ["plan-writing"]="plan-writing"
     ["planning-with-files"]="planning-with-files"
     ["concise-planning"]="concise-planning"
     ["executing-plans"]="executing-plans"
@@ -62,12 +66,9 @@ declare -A engineering_best_practices_skills=(
     ["cc-skill-coding-standards"]="cc-skill-coding-standards"
     ["code-refactoring-refactor-clean"]="code-refactoring-refactor-clean"
     ["code-refactoring-tech-debt"]="code-refactoring-tech-debt"
-    ["codebase-cleanup-refactor-clean"]="codebase-cleanup-refactor-clean"
-    ["codebase-cleanup-tech-debt"]="codebase-cleanup-tech-debt"
     ["legacy-modernizer"]="legacy-modernizer"
     ["dependency-management-deps-audit"]="dependency-management-deps-audit"
     ["dependency-upgrade"]="dependency-upgrade"
-    ["codebase-cleanup-deps-audit"]="codebase-cleanup-deps-audit"
 )
 declare -A architecture_design_skills=(
     ["software-architecture"]="software-architecture"
@@ -88,7 +89,6 @@ declare -A architecture_design_skills=(
 declare -A debugging_quality_skills=(
     ["systematic-debugging"]="systematic-debugging"
     ["debugging-strategies"]="debugging-strategies"
-    ["debugging-toolkit-smart-debug"]="debugging-toolkit-smart-debug"
     ["error-detective"]="error-detective"
     ["find-bugs"]="find-bugs"
     ["test-driven-development"]="test-driven-development"
@@ -120,12 +120,7 @@ declare -A agent_workflow_skills=(
     ["ai-agents-architect"]="ai-agents-architect"
     ["agent-orchestrator"]="agent-orchestrator"
     ["multi-agent-patterns"]="multi-agent-patterns"
-    ["parallel-agents"]="parallel-agents"
     ["agent-memory-systems"]="agent-memory-systems"
-    ["conversation-memory"]="conversation-memory"
-    ["memory-systems"]="memory-systems"
-    ["context-compression"]="context-compression"
-    ["prompt-engineering"]="prompt-engineering"
     ["prompt-engineering-patterns"]="prompt-engineering-patterns"
     ["prompt-library"]="prompt-library"
 )
@@ -193,6 +188,75 @@ write_if_missing() {
     cat > "$path"
     echo "📝 Created $path"
 }
+
+write_if_missing "ADR.md" <<EOF
+# Architecture Decision Records (ADR)
+
+## ADR-001: Agentic Workspace and Persistence
+**Status:** Accepted
+**Decision:** Use the \`.agents/\` directory as the agent workspace and \`.agents/memory-bank/\` as the canonical persistence store.
+EOF
+
+write_if_missing "AGENTS.md" <<'EOF'
+# Agent Instructions
+
+## Required Startup Read
+
+On startup, the agent must read:
+
+1. `ADR.md`
+2. `.agents/PROTOCOL.md`
+3. `.agents/memory-bank/product.md`
+4. `.agents/memory-bank/systemPatterns.md`
+5. `.agents/memory-bank/activeContext.md`
+6. `.agents/memory-bank/progress.md`
+7. The latest 2 logs from `.agents/memory-bank/logs/`, if available
+
+## Required Persistence
+
+During work, the agent should treat `.agents/memory-bank/` as the canonical project memory.
+
+At minimum:
+
+- update `activeContext.md` when the current objective or plan changes
+- update the current session log for major milestones or decisions
+- update `progress.md` before completion or handoff
+
+## Skill Model
+
+- global bundles live under `.agents/skills/`
+- project-level bundles may be linked under `.agents/skills/project/`
+EOF
+
+write_if_missing ".agents/PROTOCOL.md" <<'EOF'
+# Agent Persistence Protocol
+
+## Boot Sequence
+
+The absolute first action on initialization is to restore project context by reading:
+
+1. `ADR.md`
+2. `AGENTS.md`
+3. `.agents/memory-bank/product.md`
+4. `.agents/memory-bank/systemPatterns.md`
+5. `.agents/memory-bank/activeContext.md`
+6. `.agents/memory-bank/progress.md`
+7. The latest 2 task logs from `.agents/memory-bank/logs/`
+
+## Runtime Rules
+
+- use `.agents/memory-bank/` as the canonical persistence store
+- use `.agents/skills/` for global bundles
+- use `.agents/skills/project/` for project-specific bundle overlays when present
+
+## Shutdown Sequence
+
+Before completion or handoff:
+
+1. update the active session log
+2. update `progress.md`
+3. refresh `activeContext.md` to reflect the next live concern
+EOF
 
 write_if_missing "$MEMORY_DIR/product.md" <<EOF
 # Product Goals: $PROJECT_NAME
@@ -265,7 +329,5 @@ YYYY-MM-DD
 ## Status
 IN-PROGRESS
 EOF
-
-ln -sfn ".agents/memory-bank" "./memory-bank"
 
 echo "✅ Initialization complete. Protocol-Ready."
