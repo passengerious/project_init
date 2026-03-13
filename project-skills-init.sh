@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-LIB_PATH="${ANTIGRAVITY_SKILLS:-$HOME/.gemini/antigravity/skills}"
+LIB_PATH="$HOME/.agents/skills"
 PROJECT_SKILLS_ROOT=".agents/skills/project"
 
 if [ "$#" -ne 1 ]; then
