@@ -47,14 +47,14 @@ It reads a Markdown bundle file and creates project-specific skill symlinks unde
 
 For this repo, the Example project bundle file is:
 
-- [headlessWP_skills_bundles.md]
+[headlessWP_skills_bundles.md](https://github.com/passengerious/project_init/blob/main/headlessWP_skills_bundles.md)
 
 Example usage:
 
 ```bash
 cd ~/your-workspace/your-project
 chmod +x project-skills-init.sh
-./project-skills-init.sh
+./project-skills-init.sh headlessWP_skills_bundles.md
 ```
 
 That will create project-level skill overlays for the headless WordPress / Next.js project without changing the global bundle layout created by `agents-init.sh`.
