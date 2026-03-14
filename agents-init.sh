@@ -1,4 +1,15 @@
 #!/bin/bash
+
+# 1. Determine Environment (Hub vs. Spoke)
+if git rev-parse --is-inside-work-tree > /dev/null 2>&1 && [ "$(git rev-parse --git-dir)" != ".git" ]; then
+    IS_WORKTREE=true
+    HUB_PATH=$(dirname "$(git rev-parse --git-dir)")
+    echo "🌿 Worktree detected. Operating in Spoke mode. Hub located at: $HUB_PATH"
+else
+    IS_WORKTREE=false
+    echo "🏗️ Main repository detected. Operating in Hub mode."
+fi
+
 set -e
 
 LIB_PATH="$HOME/.agents/skills"
@@ -137,6 +148,7 @@ declare -A security_review_skills=(
     ["vibe-code-auditor"]="vibe-code-auditor"
 )
 
+# 2. Helper Functions (Defined before execution)
 link_bundle() {
     local bundle=$1
     local -n skills_ref=$2
@@ -166,17 +178,6 @@ link_skill() {
     echo "✅ $success_message"
 }
 
-link_bundle "git-collaboration" git_collaboration_skills
-link_bundle "planning-execution" planning_execution_skills
-link_bundle "engineering-best-practices" engineering_best_practices_skills
-link_bundle "architecture-design" architecture_design_skills
-link_bundle "debugging-quality" debugging_quality_skills
-link_bundle "documentation-knowledge" documentation_knowledge_skills
-link_bundle "agent-workflow" agent_workflow_skills
-link_bundle "security-review" security_review_skills
-
-echo "🧠 Injecting Deterministic Persistence Layer..."
-
 write_if_missing() {
     local path=$1
 
@@ -189,15 +190,51 @@ write_if_missing() {
     echo "📝 Created $path"
 }
 
-write_if_missing "ADR.md" <<EOF
+link_to_hub() {
+    local file_path=$1
+    local target_path="$HUB_PATH/$file_path"
+    
+    if [ ! -f "$target_path" ]; then
+        echo "❌ Error: Cannot link $file_path. It does not exist in the Hub."
+        exit 1
+    fi
+
+    ln -sfn "$target_path" "$file_path"
+    echo "🔗 Symlinked $file_path to Hub"
+}
+
+# 3. Execute Skill Linking
+link_bundle "git-collaboration" git_collaboration_skills
+link_bundle "planning-execution" planning_execution_skills
+link_bundle "engineering-best-practices" engineering_best_practices_skills
+link_bundle "architecture-design" architecture_design_skills
+link_bundle "debugging-quality" debugging_quality_skills
+link_bundle "documentation-knowledge" documentation_knowledge_skills
+link_bundle "agent-workflow" agent_workflow_skills
+link_bundle "security-review" security_review_skills
+
+echo "🧠 Injecting Deterministic Persistence Layer..."
+
+# 4. Context Execution Logic (Hub vs. Spoke routing)
+if [ "$IS_WORKTREE" = true ]; then
+    echo "🔗 Linking Strategic Context to Hub..."
+    link_to_hub "ADR.md"
+    link_to_hub "AGENTS.md"
+    link_to_hub ".agents/PROTOCOL.md"
+    link_to_hub "$MEMORY_DIR/product.md"
+    link_to_hub "$MEMORY_DIR/systemPatterns.md"
+else
+    echo "📝 Generating Strategic Context for Hub..."
+    
+    write_if_missing "ADR.md" <<EOF
 # Architecture Decision Records (ADR)
 
 ## ADR-001: Agentic Workspace and Persistence
 **Status:** Accepted
-**Decision:** Use the \`.agents/\` directory as the agent workspace and \`.agents/memory-bank/\` as the canonical persistence store.
+**Decision:** Use the \`.agents/\` directory as the agent workspace and \`.agents/memory-bank/\` as the canonical persistence store. Ensure Worktrunk compatibility via Hub-and-Spoke symlinking.
 EOF
 
-write_if_missing "AGENTS.md" <<'EOF'
+    write_if_missing "AGENTS.md" <<'EOF'
 # Agent Instructions
 
 ## Required Startup Read
@@ -228,7 +265,7 @@ At minimum:
 - project-level bundles may be linked under `.agents/skills/project/`
 EOF
 
-write_if_missing ".agents/PROTOCOL.md" <<'EOF'
+    write_if_missing ".agents/PROTOCOL.md" <<'EOF'
 # Agent Persistence Protocol
 
 ## Boot Sequence
@@ -258,18 +295,19 @@ Before completion or handoff:
 3. refresh `activeContext.md` to reflect the next live concern
 EOF
 
-write_if_missing "$MEMORY_DIR/product.md" <<EOF
+    write_if_missing "$MEMORY_DIR/product.md" <<EOF
 # Product Goals: $PROJECT_NAME
-- **Vision**: [Define core purpose]
-- **Target Audience**: [Who is this for?]
-- **Core Outcomes**: [Success metrics]
-- **Non-Goals**: [Out of scope items]
+- **Vision**: Product Idea Generation and Agentic Development for a market-ready AI JSON gallery.
+- **Target Audience**: AI execution models and frontend architectures relying on dynamic schema parsing.
+- **Core Outcomes**: Establish a self-evolving SOUL.MD registry and Opencode execution logic.
+- **Non-Goals**: Static Kilocode repositories, monolithic scaling patterns.
 EOF
 
-write_if_missing "$MEMORY_DIR/systemPatterns.md" <<'EOF'
+    write_if_missing "$MEMORY_DIR/systemPatterns.md" <<'EOF'
 # System Patterns & Persistence
 ## Architecture Rules
-- [Rule 1: e.g., Logic stays in services]
+- Use Opencode logic: minimalist, intent-based routing over hard-coded procedural logic.
+- Maintain SOUL.MD alignment across all execution contexts.
 ## Workflow Rules
 - **Boot Protocol**: Read `ADR.md`, `.agents/PROTOCOL.md`, shared memory files, and the latest 2 logs from `logs/`.
 - **State Persistence**: Update `activeContext.md` at start and after major direction changes; update `progress.md` and the current log on completion.
@@ -280,24 +318,29 @@ write_if_missing "$MEMORY_DIR/systemPatterns.md" <<'EOF'
 2. **Session Persistence**: Record milestone updates and major decisions in the current file under `logs/`.
 3. **Clean Handoff**: Update `progress.md`, link the session log in `Milestones`, and mark the task log status.
 EOF
+fi
+
+# 5. Always Create Tactical Context
+echo "🧠 Injecting Isolated Tactical Context..."
 
 write_if_missing "$MEMORY_DIR/activeContext.md" <<EOF
 # Active Context
-- **Current Objective**: Define requirements.
-- **Immediate Constraints**: [e.g., Time, API limits]
-- **Open Questions**: [Items requiring clarification]
-- **Current Plan**: [The step-by-step]
-- **Last Updated By**: Agent/Human
+- **Current Objective**: Establish worktree and await architectural instruction.
+- **Immediate Constraints**: Strict isolation. Do not modify symlinked strategic files.
+- **Open Questions**: Pending task assignment.
+- **Current Plan**: Await Worktrunk command.
+- **Last Updated By**: Initialization Script
 EOF
 
 write_if_missing "$MEMORY_DIR/progress.md" <<EOF
 # Project Progress
 ## Completed
 - [x] Base Exoskeleton Initialized
+- [x] Worktrunk Hub-and-Spoke configured
 ## In Progress
-- [ ] Requirements Refinement
+- [ ] Agentic Execution Cycle
 ## Next
-- [ ] Architecture Design
+- [ ] Schema Generation
 ## Milestones
 - [ ] Link recent session logs here as they are created.
 EOF
