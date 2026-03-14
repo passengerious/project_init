@@ -48,7 +48,7 @@ link_to_hub() {
     echo "🔗 Symlinked $file_path to Hub"
 }
 
-echo "🧠 Injecting Deterministic Persistence Layer..."
+echo "🧠 Injecting Deterministic Persistence Templates..."
 
 # 3. Context Execution Logic (Hub vs. Spoke routing)
 if [ "$IS_WORKTREE" = true ]; then
@@ -59,7 +59,7 @@ if [ "$IS_WORKTREE" = true ]; then
     link_to_hub "$MEMORY_DIR/product.md"
     link_to_hub "$MEMORY_DIR/systemPatterns.md"
 else
-    echo "📝 Generating Strategic Context for Hub..."
+    echo "📝 Generating Strategic Templates for Hub..."
     
     write_if_missing "ADR.md" <<EOF
 # Architecture Decision Records (ADR)
@@ -67,6 +67,10 @@ else
 ## ADR-001: Agentic Workspace and Persistence
 **Status:** Accepted
 **Decision:** Use the \`.agents/\` directory as the agent workspace and \`.agents/memory-bank/\` as the canonical persistence store. Ensure Worktrunk compatibility via Hub-and-Spoke symlinking. Skills managed externally via CLI.
+
+## ADR-002: [Template - Next Architecture Decision]
+**Status:** [Proposed/Accepted/Rejected]
+**Decision:** [Agent to define decision]
 EOF
 
     write_if_missing "AGENTS.md" <<'EOF'
@@ -96,7 +100,7 @@ At minimum:
 
 ## Skill Model
 
-- Skills are provisioned dynamically via \`npx skills\` CLI.
+- Skills are provisioned dynamically via `npx skills` CLI.
 EOF
 
     write_if_missing ".agents/PROTOCOL.md" <<'EOF'
@@ -117,7 +121,7 @@ The absolute first action on initialization is to restore project context by rea
 ## Runtime Rules
 
 - use `.agents/memory-bank/` as the canonical persistence store
-- use \`npx skills\` for capability provisioning
+- use `npx skills` for capability provisioning
 
 ## Shutdown Sequence
 
@@ -130,17 +134,18 @@ EOF
 
     write_if_missing "$MEMORY_DIR/product.md" <<EOF
 # Product Goals: $PROJECT_NAME
-- **Vision**: Product Idea Generation and Agentic Development for a market-ready AI JSON gallery.
-- **Target Audience**: AI execution models and frontend architectures relying on dynamic schema parsing.
-- **Core Outcomes**: Establish a self-evolving SOUL.MD registry and Opencode execution logic.
-- **Non-Goals**: Static Kilocode repositories, monolithic scaling patterns.
+- **Vision**: [Agent or Architect to define core purpose]
+- **Target Audience**: [Agent to define target users]
+- **Core Outcomes**: [Agent to define success metrics]
+- **Non-Goals**: [Agent to define out of scope items]
 EOF
 
     write_if_missing "$MEMORY_DIR/systemPatterns.md" <<'EOF'
 # System Patterns & Persistence
 ## Architecture Rules
-- Use Opencode logic: minimalist, intent-based routing over hard-coded procedural logic.
-- Maintain SOUL.MD alignment across all execution contexts.
+- [Agent to define structural and architectural rules]
+- [Agent to define logic constraints]
+
 ## Workflow Rules
 - **Boot Protocol**: Read `ADR.md`, `.agents/PROTOCOL.md`, shared memory files, and the latest 2 logs from `logs/`.
 - **State Persistence**: Update `activeContext.md` at start and after major direction changes; update `progress.md` and the current log on completion.
@@ -153,27 +158,29 @@ EOF
 EOF
 fi
 
-# 4. Always Create Tactical Context
-echo "🧠 Injecting Isolated Tactical Context..."
+# 4. Always Create Tactical Context Templates
+echo "🧠 Injecting Isolated Tactical Context Templates..."
 
 write_if_missing "$MEMORY_DIR/activeContext.md" <<EOF
 # Active Context
-- **Current Objective**: Establish worktree and await architectural instruction.
-- **Immediate Constraints**: Strict isolation. Do not modify symlinked strategic files.
-- **Open Questions**: Pending task assignment.
-- **Current Plan**: Await Worktrunk command.
-- **Last Updated By**: Initialization Script
+- **Current Objective**: [Agent to define immediate task]
+- **Immediate Constraints**: [Agent to list current blockers or environment limits]
+- **Open Questions**: [Agent to list items requiring clarification]
+- **Current Plan**: [Agent to define step-by-step execution plan]
+- **Last Updated By**: [Agent Name / Architect]
 EOF
 
 write_if_missing "$MEMORY_DIR/progress.md" <<EOF
 # Project Progress
 ## Completed
-- [x] Base Exoskeleton Initialized
-- [x] Worktrunk Hub-and-Spoke configured
+- [x] Initial Exoskeleton Bootstrapped
+
 ## In Progress
-- [ ] Agentic Execution Cycle
+- [ ] [Agent to define current active milestone]
+
 ## Next
-- [ ] Schema Generation
+- [ ] [Agent to define upcoming milestone]
+
 ## Milestones
 - [ ] Link recent session logs here as they are created.
 EOF
