@@ -64,13 +64,20 @@ else
     write_if_missing "ADR.md" <<EOF
 # Architecture Decision Records (ADR)
 
-## ADR-001: Agentic Workspace and Persistence
-**Status:** Accepted
-**Decision:** Use the \`.agents/\` directory as the agent workspace and \`.agents/memory-bank/\` as the canonical persistence store. Ensure Worktrunk compatibility via Hub-and-Spoke symlinking. Skills managed externally via CLI.
+This document tracks the core architectural choices made during the project lifecycle. 
+Both the Architect and autonomous agents must append new decisions here to maintain execution alignment.
 
-## ADR-002: [Template - Next Architecture Decision]
+## ADR-001: [Baseline Workspace Architecture]
+**Date:** $(date +%Y-%m-%d)
+**Status:** [Proposed/Accepted]
+**Context:** The project requires a decentralized, parallel execution environment and dynamic skill provisioning.
+**Decision:** [Agent or Architect to formally record the persistence structure, Git Worktree rules, and \`npx skills\` execution constraints here before feature development begins.]
+
+## ADR-002: [Template - Next Feature Decision]
+**Date:** YYYY-MM-DD
 **Status:** [Proposed/Accepted/Rejected]
-**Decision:** [Agent to define decision]
+**Context:** [What is the technical challenge or feature requirement?]
+**Decision:** [What is the chosen approach and why?]
 EOF
 
     write_if_missing "AGENTS.md" <<'EOF'
